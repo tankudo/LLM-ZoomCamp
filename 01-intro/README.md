@@ -1,53 +1,16 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Course Module</title>
-    <style>
-        .dropdown {
-            display: inline-block;
-            position: relative;
-        }
-        .dropdown-content {
-            display: none;
-            position: absolute;
-            background-color: #f9f9f9;
-            min-width: 160px;
-            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-            z-index: 1;
-        }
-        .dropdown-content a {
-            color: black;
-            padding: 12px 16px;
-            text-decoration: none;
-            display: block;
-        }
-        .dropdown-content a:hover {
-            background-color: #f1f1f1;
-        }
-        .dropdown:hover .dropdown-content {
-            display: block;
-        }
-        .dropdown:hover .dropbtn {
-            background-color: #3e8e41;
-        }
-    </style>
-</head>
-<body>
+# Course Module
 
-<div class="dropdown">
-    <button class="dropbtn">Lecture Notes</button>
-    <div class="dropdown-content">
-        <a href="#lecture1">Lecture 1</a>
-        <a href="#lecture2">Lecture 2</a>
-        <a href="#lecture3">Lecture 3</a>
-        <!-- Add more lectures as needed -->
-    </div>
-</div>
+## Table of Contents
+- [Lecture 1](#lecture-1)
+- [Lecture 2](#lecture-2)
+- [Lecture 3](#lecture-3)
 
-# Lecture 1
-<a name="lecture1"></a>
+---
+
+<details>
+  <summary>Lecture 1</summary>
+
+  # Lecture Notes
 
 ## Introduction
 - **Welcome** to the course.
@@ -115,15 +78,20 @@
 
 
 
-# Lecture 2
-<a name="lecture2"></a>
-## This is our first module for the first unit
-<!-- Your Lecture 2 content here -->
+</details>
 
-# Lecture 3
-<a name="lecture3"></a>
-## In this course the course is called LLM
-<!-- Your Lecture 3 content here -->
+<details>
+  <summary>Lecture 2</summary>
 
-</body>
-</html>
+  ## Welcome to Lecture 2
+  This is the content for Lecture 2.
+
+</details>
+
+<details>
+  <summary>Lecture 3</summary>
+
+  ## Welcome to Lecture 3
+  This is the content for Lecture 3.
+
+</details>
