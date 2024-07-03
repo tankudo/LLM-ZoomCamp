@@ -13,15 +13,10 @@
   # Lecture Notes
 
 ## Introduction
-- **Welcome** to the course.
-- **First Module** of the first unit.
-- Course Title: **LLM Zoom Camp**.
 - Focus: Practical applications of LLMs with an emphasis on **RAG (Retrieval-Augmented Generation)**.
 
 ## Course Overview
 - **Problem Statement**:
-  - Many courses in the community generate numerous FAQs.
-  - Existing FAQ documents are extensive but not user-friendly for quick searches.
   - Goal: Create a Q&A system using LLMs to simplify finding answers in FAQ documents.
 
 ## Objective
