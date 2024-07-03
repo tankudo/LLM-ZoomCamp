@@ -8,7 +8,7 @@
 ---
 
 <details>
-  <summary>Lecture 1</summary>
+  <summary id="lecture-1">Lecture 1</summary>
 
   # Lecture Notes
 
@@ -81,7 +81,7 @@
 </details>
 
 <details>
-  <summary>Lecture 2</summary>
+  <summary id="lecture-2">Lecture 2</summary>
 
   ## Welcome to Lecture 2
   This is the content for Lecture 2.
@@ -89,7 +89,7 @@
 </details>
 
 <details>
-  <summary>Lecture 3</summary>
+  <summary id="lecture-3">Lecture 3</summary>
 
   ## Welcome to Lecture 3
   This is the content for Lecture 3.
