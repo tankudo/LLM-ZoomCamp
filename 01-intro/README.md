@@ -168,6 +168,53 @@ By the end of this setup, you should have a fully functional environment ready f
 <details>
   <summary id="lecture-3">Retrieval and Search</summary>
 
+  ### The ROCK Framework
+- The framework consists of two components: the database and LLM.
+- For the database, we will use a simple search engine implemented in one of the pre-course workshops.
+- In the course repository, you can find a workshop on implementing a search engine, including a video and GitHub repo.
+- The search engine is an in-memory search engine for illustration purposes, not production-ready.
+- Later in the module, we will replace it with Elastic Search.
+
+### Implementing a Search Engine
+- We'll use a simple search engine from the workshop, populate it with FAQ documents, perform a search, and use the results in an LLM to get answers to questions.
+- There is a Python file, `min_search.py`, which implements the search functionality.
+
+### Setting Up the Environment
+- Start a new Jupyter notebook named "RO Intro".
+- Download the search engine implementation using the `wget` command and import it as a package.
+
+### Loading and Processing Data
+- The FAQ documents are in JSON format, with each course containing a JSON object that includes the question, section, and text (answer).
+- To use these documents, load them into the search engine by:
+  1. Importing the JSON library.
+  2. Opening the JSON file.
+  3. Converting the nested structure into a flat list of dictionaries.
+  
+### Indexing Documents
+- Use the `min_search` library to index the documents.
+- Specify which fields are text fields and which are keyword fields.
+- Keyword fields allow for exact filtering, similar to SQL queries.
+- Text fields are used for performing the search.
+
+### Performing a Search
+- Create an index with the specified text and keyword fields.
+- Example query: "The course has already started, can I still enroll?"
+- Use boosting to give more importance to certain fields (e.g., question field over the text field).
+
+### Search Implementation
+- Fit the index to the documents.
+- Execute the query to retrieve relevant documents.
+- Filter the results to restrict them to the relevant course (e.g., Data Engineering Zoom Camp).
+
+### Retrieving and Using Results
+- Retrieve the most relevant documents for the query.
+- Use the documents as context for the LLM.
+- Next steps involve building a prompt using these documents as context for the LLM.
+
+### Conclusion
+- We have implemented the first step: indexing the knowledge base and retrieving context for queries.
+- The next video will cover using these documents in an LLM.
+- See you soon!
   
 
 </details>
