@@ -3,7 +3,7 @@
 ## Table of Contents
 - [Introduction to LLM and RAG](#lecture-1)
 - [Configuring Your Environment](#lecture-2)
-- [Lecture 3](#lecture-3)
+- [Retrieval and Search](#lecture-3)
 
 ---
 
@@ -166,9 +166,8 @@ By the end of this setup, you should have a fully functional environment ready f
 </details>
 
 <details>
-  <summary id="lecture-3">Lecture 3</summary>
+  <summary id="lecture-3">Retrieval and Search</summary>
 
-  ## Welcome to Lecture 3
-  This is the content for Lecture 3.
+  
 
 </details>
