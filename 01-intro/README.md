@@ -4,6 +4,7 @@
 - [Introduction to LLM and RAG](#lecture-1)
 - [Configuring Your Environment](#lecture-2)
 - [Retrieval and Search](#lecture-3)
+- [Generating Answers with OpenAI GPT 4-o](#lecture-4)
 
 ---
 
@@ -168,7 +169,9 @@ By the end of this setup, you should have a fully functional environment ready f
 <details>
   <summary id="lecture-3">Retrieval and Search</summary>
 
-  ### The ROCK Framework
+  This lecture is about the concept of retrival. The search engine **Minserch** created in introduction videos will be used.
+  
+  ### The rag Framework
 - The framework consists of two components: the database and LLM.
 - For the database, we will use a simple search engine implemented in one of the pre-course workshops.
 - In the course repository, you can find a workshop on implementing a search engine, including a video and GitHub repo.
@@ -177,10 +180,10 @@ By the end of this setup, you should have a fully functional environment ready f
 
 ### Implementing a Search Engine
 - We'll use a simple search engine from the workshop, populate it with FAQ documents, perform a search, and use the results in an LLM to get answers to questions.
-- There is a Python file, `min_search.py`, which implements the search functionality.
+- There is a Python file, `minsearch.py`, which implements the search functionality.
 
 ### Setting Up the Environment
-- Start a new Jupyter notebook named "RO Intro".
+- Start a new Jupyter notebook named "rag-intro.ipynb".
 - Download the search engine implementation using the `wget` command and import it as a package.
 
 ### Loading and Processing Data
@@ -191,7 +194,7 @@ By the end of this setup, you should have a fully functional environment ready f
   3. Converting the nested structure into a flat list of dictionaries.
   
 ### Indexing Documents
-- Use the `min_search` library to index the documents.
+- Use the `minsearch` library to index the documents.
 - Specify which fields are text fields and which are keyword fields.
 - Keyword fields allow for exact filtering, similar to SQL queries.
 - Text fields are used for performing the search.
@@ -205,6 +208,7 @@ By the end of this setup, you should have a fully functional environment ready f
 - Fit the index to the documents.
 - Execute the query to retrieve relevant documents.
 - Filter the results to restrict them to the relevant course (e.g., Data Engineering Zoom Camp).
+- Use boost if you need to set one field more then another.
 
 ### Retrieving and Using Results
 - Retrieve the most relevant documents for the query.
@@ -213,8 +217,9 @@ By the end of this setup, you should have a fully functional environment ready f
 
 ### Conclusion
 - We have implemented the first step: indexing the knowledge base and retrieving context for queries.
-- The next video will cover using these documents in an LLM.
-- See you soon!
-  
+- The next video will cover using these documents in an LLM.  
 
+</details>
+<details>
+  <summary id="lecture-4"> Generating Answers with OpenAI GPT 4-o</summary>
 </details>
