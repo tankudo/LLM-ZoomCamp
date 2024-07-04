@@ -84,7 +84,7 @@
 Configuration of the environment for a machine learning project, demonstration of GitHub Codespaces usage.
 
 ## Tools and Setup
-- **Docker**: Not covered in detail; required for Codespaces.
+- **Docker**: Not covered in detail, Codespaces has docker.
 - **Notebook Providers**: You can use Google Colab, Saturn Cloud, SageMaker, or run locally.
 
 ## Preparing for the Second Module
@@ -93,8 +93,12 @@ Configuration of the environment for a machine learning project, demonstration o
 ## Setting Up GitHub Codespaces
 1. **Create a Repository**: Make it public to share notebooks and homeworks.
 2. **Launch Codespace**: Click on 'Create Codespace on Main' from the 'Code' tab.
-3. **Install Extensions**: Ensure the Codespaces extension is installed in Visual Studio Code.
+3. **Install Extensions**: Ensure the Codespaces extension is installed in Visual Studio Desktop.
 
+## Check your enviroment
+  - `docker run hello-word`
+  - `python -V`
+    
 ## Installing Libraries
 - Use `pip install` to set up the required libraries:
   - `tqdm`
@@ -105,19 +109,29 @@ Configuration of the environment for a machine learning project, demonstration o
   - `pandas`
 
 ## Using OpenAI
-1. **Set Environment Variable**: `export OPENAI_API_KEY=<your_key>`
-2. **Start Jupyter Notebook**: Use `jupyter notebook` to launch the environment.
-3. **Access Notebook**: Use the forwarded port (e.g., `localhost:8888`) to open Jupyter in the browser.
+1. **Register at (platphormopenai.com)**
+   - go to API keys
+   - press "create new API key"
+   - give it a name and create secret key
+2. **Set Environment Variable**: `export OPENAI_API_KEY="your_key"`
+3. **Start Jupyter Notebook**: Use `jupyter notebook` to launch the environment.
+4. **Access Notebook**: Use the forwarded port (e.g., `localhost:8888`) to open Jupyter in the browser.
+5. Copy your tocken from the terminal
 
 ## Example Code for OpenAI API
 ```python import openai
+from openai import OpenAI
 
 # Create client
 client = openai.Client(api_key='your_api_key')
 
+# if you need to check your key
+import os
+os.environ
+
 # Create a chat request
-response = client.chat.create(
-    model="gpt-4",
+response = client.chat.completions.create(
+    model="gpt-4o",
     messages=[
         {"role": "user", "content": "Is it too late to join the course?"}
     ]
@@ -125,32 +139,28 @@ response = client.chat.create(
 
 # Print the response
 print(response.choices[0].message['content'])
-Alternative Environment Setup with Anaconda
+```
+## Alternative Environment Setup with Anaconda
+
 Download Anaconda:
 
-bash
-Copy code
-wget https://repo.anaconda.com/archive/Anaconda3-2021.11-Linux-x86_64.sh
-bash Anaconda3-2021.11-Linux-x86_64.sh
+`wget https://repo.anaconda.com/archive/Anaconda3-2024.02-1-Linux-x86_64.sh`
+
 Miniconda Installation:
 
-bash
-Copy code
-wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
-bash Miniconda3-latest-Linux-x86_64.sh
+`wget https://repo.anaconda.com/miniconda/Miniconda3-py310_24.4.0.0-Linux-x86_64.sh`
+
 Initialize and Check:
 
-bash
-Copy code
-source ~/.bashrc
+`source ~/.bashrc
 which python
-python --version
+python --version`
+
 Install Required Libraries:
 
-bash
-Copy code
-pip install tqdm jupyter notebook openai elasticsearch scikit-learn pandas
-Conclusion
+`pip install tqdm jupyter notebook openai elasticsearch scikit-learn pandas`
+## Conclusion
+
 By the end of this setup, you should have a fully functional environment ready for machine learning projects using either GitHub Codespaces or Anaconda. Ensure you keep your OpenAI API key secure and never expose it publicly.
 
 </details>
