@@ -222,4 +222,43 @@ By the end of this setup, you should have a fully functional environment ready f
 </details>
 <details>
   <summary id="lecture-4"> Generating Answers with OpenAI GPT 4-o</summary>
+
+## Generation
+
+### Overview 
+- Performing a search using a user query.
+
+### Demonstration
+- Example query: "The course has already started, can I still enroll?"
+- Retrieve relevant answers from our knowledge base.
+- The goal is to use these documents as context in an LLM to answer user queries.
+
+### Using LLMs
+- Use OpenAI's GPT-4o for demonstration.
+- The LLM will use the retrieved documents as context for generating answers.
+
+### Setting Up the Environment 
+- Import OpenAI and set up the API key.
+- Configure the environment as shown in the preparation video.
+
+### Building the Prompt
+- Form a prompt and send it to OpenAI or another LLM.
+- Use GPT-4o, which is fast and cost-effective compared to GPT-3.5.
+- Prepare the API client and define the user query.
+
+### Crafting the Prompt Template
+- Assign a role to the LLM, e.g., "course teaching assistant."
+- Structure the prompt to include the user's question and context from the knowledge base.
+- Specify that the LLM should use only the provided context for answers.
+
+### Generating the Answer
+- Build the context by iterating over the retrieved documents.
+- Format the prompt with the user's question and the context.
+- Send the prompt to GPT-4 and retrieve the generated answer.
+
+### Conclusion
+- Accomplished the goal of generating an answer based on retrieved context.
+- Next steps: modularize the code, improve logic, and prepare for easy replacement of the search engine or LLM.
+- See you in the next video where we will clean and modularize the code.
+
 </details>
