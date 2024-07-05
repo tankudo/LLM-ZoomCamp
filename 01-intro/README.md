@@ -39,7 +39,8 @@
 - **Components**:
   - **Retrieval**: Searching a knowledge base (e.g., FAQ documents).
   - **Generation**: Using LLM to generate responses based on retrieved context.
-![image](https://github.com/tankudo/LLM-ZoomCamp/assets/58089872/3304c12a-07e9-4eb2-b220-ef9d0ce1fa13)
+  - 
+![image](https://github.com/tankudo/LLM-ZoomCamp/assets/58089872/51fc3f18-7563-4df5-8604-6a8ee1ea8168)
 
 ## Practical Implementation
 - **Process**:
@@ -239,7 +240,7 @@ By the end of this setup, you should have a fully functional environment ready f
 
 ### Setting Up the Environment 
 - Import OpenAI and set up the API key.
-- Configure the environment as shown in the preparation video.
+- Configure the environment.
 
 ### Building the Prompt
 - Form a prompt and send it to OpenAI or another LLM.
