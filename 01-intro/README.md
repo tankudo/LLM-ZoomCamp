@@ -189,6 +189,9 @@ By the end of this setup, you should have a fully functional environment ready f
 ### Setting Up the Environment
 - Start a new Jupyter notebook named "rag-intro.ipynb".
 - Download the search engine implementation using the `wget` command and import it as a package.
+```python
+  !wget https://raw.githubusercontent.com/alexeygrigorev/minsearch/main/minsearch.py
+```
 
 ### Loading and Processing Data
 - The FAQ documents are in JSON format, with each course containing a JSON object that includes the question, section, and text (answer).
@@ -196,10 +199,29 @@ By the end of this setup, you should have a fully functional environment ready f
   1. Importing the JSON library.
   2. Opening the JSON file.
   3. Converting the nested structure into a flat list of dictionaries.
-  
+```python
+import json
+with open('documents.json', 'rt') as f_in:
+    docs_raw = json.load(f_in)
+documents = []
+
+for course_dict in docs_raw:
+    for doc in course_dict['documents']:
+        doc['course'] = course_dict['course']
+        documents.append(doc)
+```
 ### Indexing Documents
 - Use the `minsearch` library to index the documents.
+```python
+import minsearch
+```
 - Specify which fields are text fields and which are keyword fields.
+```python
+index = minsearch.Index(
+    text_fields=["question", "text", "section"],
+    keyword_fields=["course"]
+)
+```
 - Keyword fields allow for exact filtering, similar to SQL queries.
 - Text fields are used for performing the search.
 
@@ -210,10 +232,23 @@ By the end of this setup, you should have a fully functional environment ready f
 
 ### Search Implementation
 - Fit the index to the documents.
+```python
+index.fit(document)
+```
 - Execute the query to retrieve relevant documents.
 - Filter the results to restrict them to the relevant course (e.g., Data Engineering Zoom Camp).
-- Use boost if you need to set one field more then another.
-
+```python
+results = index.search(
+        query=query,
+        filter_dict={'course': 'data-engineering-zoomcamp'},
+        boost_dict=boost,
+        num_results=5
+    )
+``` 
+- Use boost if you need to set one field more then another. Higher value refers for higher importans.
+```python
+boost = {'question': 3.0, 'section': 0.5}
+```
 ### Retrieving and Using Results
 - Retrieve the most relevant documents for the query.
 - Use the documents as context for the LLM.
