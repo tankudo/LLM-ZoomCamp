@@ -509,5 +509,11 @@ def rag(query):
     return answer
 
 ```
+
+### Conclusion
+- Modularity: The system is highly modular; components can be easily swapped.
+- Future Work: Show how to replace the LLM (OpenAI) with an open-source one.
+- Next Steps: A video on running it locally will be available next week.
+- Sign-Off: Have fun and see you around!
   
 </details>
