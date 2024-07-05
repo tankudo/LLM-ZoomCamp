@@ -241,22 +241,54 @@ By the end of this setup, you should have a fully functional environment ready f
 ### Setting Up the Environment 
 - Import OpenAI and set up the API key.
 - Configure the environment.
-
+  ```
+  from openai import OpenAI
+  client = OpenAI()
+  ```
 ### Building the Prompt
 - Form a prompt and send it to OpenAI or another LLM.
 - Use GPT-4o, which is fast and cost-effective compared to GPT-3.5.
 - Prepare the API client and define the user query.
-
+```
+response = client.chat.completions.create(
+    model='gpt-4o',
+    messages=[{"role": "user", "content": q}]
+)
+```
 ### Crafting the Prompt Template
 - Assign a role to the LLM, e.g., "course teaching assistant."
 - Structure the prompt to include the user's question and context from the knowledge base.
 - Specify that the LLM should use only the provided context for answers.
+```
+prompt_template = """
+You're a course teaching assistant. Answer the QUESTION based on the CONTEXT from the FAQ database.
+Use only the facts from the CONTEXT when answering the QUESTION.
+
+QUESTION: {question}
+
+CONTEXT: 
+{context}
+""".strip()
+```
 
 ### Generating the Answer
 - Build the context by iterating over the retrieved documents.
+  ```
+  context = ""
+    
+    for doc in search_results:
+        context = context + f"section: {doc['section']}\nquestion: {doc['question']}\nanswer: {doc['text']}\n\n"
+  ```
 - Format the prompt with the user's question and the context.
+  ```
+  prompt = prompt_template.format(question=query, context=context).strip()
+  ```
 - Send the prompt to GPT-4 and retrieve the generated answer.
-
+  ```
+  response = client.chat.completions.create(
+        model='gpt-4o',
+        messages=[{"role": "user", "content": prompt}]
+    )```
 ### Conclusion
 - Accomplished the goal of generating an answer based on retrieved context.
 - Next steps: modularize the code, improve logic, and prepare for easy replacement of the search engine or LLM.
