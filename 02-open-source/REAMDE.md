@@ -6,7 +6,7 @@
 - [HuggingFace and Google FLAN T5](#lecture-3)
 - [Phi 3 Mini](#lecture-4)
 - [Mistral-7B and HuggingFace Hub Authentication](#lecture-5)
-- [](#lecture-6)
+- [Exploring Open Source LLMs](#lecture-6)
 - [](#lecture-7)
 - [](#lecture-8)
 - [](#lecture-9)
@@ -267,7 +267,90 @@ output = pipe(messages, **generation_args)
 </details>
 
 <details>
-  <summary id="lecture-5"> </summary>
+  <summary id="lecture-5"> Mistral-7B and HuggingFace Hub Authentication</summary>
+
+## Overview
+This session focuses on implementing the Mistral 7B model using Hugging Face's platform.
+
+## Steps to Access and Use the Model
+
+1. **Model Discovery**
+   - Copy the model name, search on Google, and locate the Hugging Face model card page.
+
+2. **Model Information**
+   - Unlike other models, the Mistral 7B model page lacks example code snippets.
+   - Possible solutions:
+     - Search in Goodle, ask ChatGPT but also, HuggingFace turorial has information about Mistral.
+
+3. **Setting Up the Model**
+   - Create a model and tokenizer instance similarly to previous models.
+   - Use Hugging Face's API to load the model and tokenizer.
+
+4. **Handling Authorization**
+   - This model requires acceptance of an agreement on Hugging Face.
+   - Sign in to Hugging Face, go to settings, and create an access token.
+   - Use the token in your code to authenticate and access the model.
+
+5. **Code Implementation**
+   - Import necessary libraries and use the token for Hugging Face login:
+     ```python
+     from huggingface_hub import login
+     login(token=os.environ['HF_TOKEN'])
+     ```
+
+6. **Model and Tokenizer Initialization**
+   - Initialize the model and tokenizer:
+     ```python
+     from transformers import AutoModelForCausalLM, AutoTokenizer
+
+     model = AutoModelForCausalLM.from_pretrained("mistral/Mistral-7b-v0.1", device_map="auto", load_in_4bit=True)
+     tokenizer = AutoTokenizer.from_pretrained("mistral/Mistral-7b-v0.1", padding_side="left")
+     ```
+
+## Experimentation and Troubleshooting
+
+1. **Memory and Resource Management**
+   - Ensure sufficient memory is available by stopping other running models.
+   - Monitor GPU memory usage.
+
+2. **Handling Large Prompts**
+   - The Mistral 7B model may not handle large prompts efficiently.
+   - Experiment with reducing prompt size and adjusting model parameters.
+
+3. **Error Handling**
+   - Common issues include unauthorized access and incomplete prompts.
+   - Verify token validity and prompt formatting.
+
+4. **Using Pipelines**
+   - Utilize Hugging Face pipelines for a more streamlined approach:
+     ```python
+     from transformers import pipeline
+
+     generator = pipeline("text-generation", model=model, tokenizer=tokenizer)
+     ```
+
+## Saving and Serving Models
+
+1. **Local Model Storage**
+   - Download and save models locally to avoid repeated authentication:
+     ```python
+     model.save_pretrained("local_model_directory")
+     tokenizer.save_pretrained("local_model_directory")
+     ```
+
+2. **Loading Saved Models**
+   - Load the saved model and tokenizer from the local directory:
+     ```python
+     model = AutoModelForCausalLM.from_pretrained("local_model_directory")
+     tokenizer = AutoTokenizer.from_pretrained("local_model_directory")
+     ```
+
+
+## Conclusion
+
+- The Mistral 7B model offers significant capabilities but requires careful prompt handling and parameter tuning.
+- Effective use involves proper setup, troubleshooting, and efficient resource management.
+- Saving models locally can enhance deployment flexibility and efficiency.
 
 </details>
 
