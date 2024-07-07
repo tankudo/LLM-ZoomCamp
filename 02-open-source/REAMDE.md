@@ -4,8 +4,8 @@
 - [Open Source LLMs](#lecture-1)
 - [Using SaturnCloud for GPU Notebooks](#lecture-2)
 - [HuggingFace and Google FLAN T5](#lecture-3)
-- [](#lecture-4)
-- [](#lecture-5)
+- [Phi 3 Mini](#lecture-4)
+- [Mistral-7B and HuggingFace Hub Authentication](#lecture-5)
 - [](#lecture-6)
 - [](#lecture-7)
 - [](#lecture-8)
@@ -170,7 +170,99 @@ outputs = model.generate(
 </details>
 
 <details>
-  <summary id="lecture-4"> </summary>
+  <summary id="lecture-4"> Phi 3 Mini</summary>
+
+## Using Another Open Source Model on Hugging Face Hub
+
+### Introduction
+- **Objective**: Explore another open-source model available on Hugging Face Hub.
+
+### New Model: Microsoft Phi-3
+- **Model Name**: Phi-3 from Microsoft.
+- **Characteristics**: 
+  - Relatively new model.
+  - Different sizes available (e.g., Mini, Small).
+  - Suitable for GPUs with around 15-16 GB memory.
+
+### Steps to Explore Phi-3 Model
+1. **Search and Access**:
+   - Look up the model on Hugging Face Hub.
+   - Review the model's page and documentation.
+
+2. **GPU Specification Check**:
+   - Open a terminal on the machine with GPU.
+   - Run `nvidia-smi` to check GPU specs (memory and type).
+
+3. **Prepare the Environment**:
+   - Stop any previous model instances to free up GPU memory.
+   - Duplicate the existing Jupyter notebook for the new model.
+
+4. **Setup Phi-3 Model**:
+   - Rename the new notebook appropriately.
+   - Create a pipeline to combine the model and tokenizer.
+   - Set the random seed for reproducibility.
+```python  
+import torch
+from transformers import AutoModelForCausalLM, AutoTokenizer, pipeline
+
+torch.random.manual_seed(0)
+```
+
+5. **Download and Initialize Model**:
+   - Download the Phi-3 model and its tokenizer.
+   - Note the size comparison with Flan-T5 (Phi-3 is around 7 GB).
+  ```python
+  model = AutoModelForCausalLM.from_pretrained(
+    "microsoft/Phi-3-mini-128k-instruct", 
+    device_map="cuda", 
+    torch_dtype="auto", 
+    trust_remote_code=True, 
+)
+tokenizer = AutoTokenizer.from_pretrained("microsoft/Phi-3-mini-128k-instruct")
+```
+
+### Model Usage
+- **Interface**:
+  - Slightly different from Flan-T5.
+  - Supports a chatbot-like interface.
+- **Execution**:
+  - Create and run the pipeline.
+```python
+  pipe = pipeline(
+    "text-generation",
+    model=model,
+    tokenizer=tokenizer,
+
+)
+```
+
+  - Pass messages and parameters to the model.
+```python
+search_results = search(query)
+prompt = build_prompt(query, search_results)
+messages = [
+        {"role": "user", "content": prompt},
+    ]
+
+generation_args = {
+        "max_new_tokens": 500,
+        "return_full_text": False,
+        "temperature": 0.0,
+        "do_sample": False,
+    }
+```
+
+  - Observe the output and adjust if necessary.
+```python
+output = pipe(messages, **generation_args)
+```
+
+### Conclusion
+- **Model Performance**:
+  - Output seems coherent.
+  - Adjustments like stripping spaces may be needed.
+- **Next Steps**:
+  - Explore another model from Mistral in the next video.
 
 </details>
 
