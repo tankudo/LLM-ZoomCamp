@@ -7,9 +7,9 @@
 - [Phi 3 Mini](#lecture-4)
 - [Mistral-7B and HuggingFace Hub Authentication](#lecture-5)
 - [Exploring Open Source LLMs](#lecture-6)
-- [](#lecture-7)
-- [](#lecture-8)
-- [](#lecture-9)
+- [Running LLMs Locally without a GPU with Ollama](#lecture-7)
+- [Ollama + Elastic in Docker Compose](#lecture-8)
+- [Creating a Streamlit UI](#lecture-9)
 ---
 
 <details>
@@ -352,25 +352,254 @@ This session focuses on implementing the Mistral 7B model using Hugging Face's p
 - Effective use involves proper setup, troubleshooting, and efficient resource management.
 - Saving models locally can enhance deployment flexibility and efficiency.
 
+**Links:**
+
+- https://huggingface.co/docs/transformers/en/llm_tutorial
+- https://huggingface.co/settings/tokens
+- https://huggingface.co/mistralai/Mistral-7B-v0.1
 </details>
 
 <details>
-  <summary id="lecture-6"> </summary>
+  <summary id="lecture-6"> Exploring Open Source LLMs</summary>
+
+## Using Another Open Source Model on Hugging Face Hub
+
+### Introduction
+- **Objective**: Where to find open source models?.
+
+### Finding Models
+
+- **Sources:** 
+  - **Social Media:** Twitter and other platforms often discuss new models.
+  - **Benchmarks:** 
+    - Open LLM Leaderboard
+    - Open LLM Perf Leaderboard
+  - **Tutorials:** Previous tutorials and videos might include useful benchmarks and models.
+
+### Leaderboards
+
+- **Open LLM Leaderboard:** Focuses on performance scores.
+- **Open LLM Perf Leaderboard:** Emphasizes performance, useful for finding models compatible with smaller GPUs.
+
+### Model Sizes and Performance
+
+- **GPU Requirements:** Large models need substantial GPU resources. For smaller GPUs, 7B or 8B models work well.
+- **Quantization:** Using smaller data types (e.g., 16-bit instead of 64-bit) to reduce model size and improve performance.
+
+### Finding and Using Models
+
+- **Search:** Use ChatGPT or Google to find recent 7B open-source models.
+- **Experimentation:** Test different models to see what works best for you.
+- **Usage:** Once you find a model that fits your needs, you can implement it.
+
+### Conclusion
+
+- **Finding Models:** Google, social media, and leaderboards are valuable resources for discovering models.
+- **Next Steps:** The next video will cover running LLMs on a CPU when a GPU is not available.
+
+**Links:**
+
+- https://huggingface.co/spaces/open-llm-leaderboard/open_llm_leaderboard
+- https://huggingface.co/spaces/optimum/llm-perf-leaderboard
 
 </details>
 
 <details>
-  <summary id="lecture-7"> </summary>
+  <summary id="lecture-7"> Running LLMs Locally without a GPU with Ollama</summary>
+
+### Introduction
+- **Objective**: Demonstrate how to run a large language model (LLM) on a local machine without a GPU.
+- **Environment**: Using a laptop and CodeSpaces.
+- **Tool**: Orama, an open-source project for running LLMs locally.
+
+### Setup
+- **Compatibility**: Orama runs on Windows, Linux, and macOS.
+- **Windows Setup**: Use the installer for easy setup.
+Example for Linux:
+```bach
+curl -fsSL hhtps://ollama.com/install.sh | sh
+```
+
+### Running Orama Locally
+1. **Creating a CodeSpace**:
+   - Requires a more powerful machine than default settings.
+   - Use a machine type with four cores.
+2. **Starting the Server**:
+   - Initialize a new CodeSpace.
+   - Run `ollama start` to start the server.
+   - Open a new tab and run `ollama run phi3` to execute the model locally.
+
+### Example Execution
+- **Prompt Execution**:
+  - Initial simple prompt shows immediate response.
+  - Complex prompts take longer as the model needs to analyze the context.
+  - Performance depends on local machine capabilities.
+
+### Using Orama as a Drop-in Replacement for OpenAI API
+- **Modification**: Change the base URL to point to Orama instead of OpenAI.
+- **Execution**:
+  - Start a Jupyter notebook.
+  - Modify the API call to use ollama.
+  - Note: Results may need prompt engineering for better accuracy.
+
+### Running ollama in Docker
+- **Command**: Use a specific Docker command to run ollama.
+- **Windows Configuration**:
+  - Ensure server calls are directed to the Docker instance.
+  - Port forwarding and volume mapping are crucial for persistence and access.
+- **Docker Execution**:
+  - Pull the model once and it will be used in subsequent executions.
+  - Docker setup allows running the model either locally or in CodeSpaces.
+```bach
+  docker run -it \
+    -v ollama:/root/.ollama \
+    -p 11434:11434 \
+    --name ollama \
+    ollama/ollama
+```
+### Summary
+- **Flexibility**: ollama can run various models, including Liama 3 and Gemma.
+- **Next Steps**: Learn how to integrate ElasticSearch with ollama and Docker Compose in the next video.
+
+### Conclusion
+- **Outcome**: Successfully run an LLM locally without a GPU using ollama.
+- **Recommendation**: Experiment with different models and prompt engineering for optimal results.
 
 </details>
 
 <details>
-  <summary id="lecture-8"> </summary>
+  <summary id="lecture-8"> Ollama + Elastic in Docker Compose</summary>
+
+### Introduction
+
+- **Overview:** We will combine a ollama with Elasticsearch in one Docker Compose file.
+- **Objective:** Run the notebook from Module 1 locally, replacing OpenAI with ollama and integrating Elasticsearch.
+
+### Previous Discussions
+
+- **Llama Model:** We previously discussed using Llama as a drop-in replacement for the OpenAI API.
+- **Local Execution:** Now, we will build on that to run everything locally.
+
+### Creating the Docker Compose File
+
+- **Commands:** We need two Docker commands to create the Docker Compose file.
+- **Automation:** Use ChatGPT to generate a Docker Compose YAML file from the terminal commands.
+- **Execution:** Run the Docker Compose file to start Elasticsearch and ollama.
+
+### Running Docker Compose
+
+- **Setup:** Execute `docker-compose up` to start the services.
+- **Model Download:** Ensure the ollama model is downloaded locally.
+- **Check Containers:** Use `docker ps` to list running containers.
+- **Execute Commands:** Use `docker exec -it ollama bash` to interact with the Llama container.
+- Then `ollama pull phi3`
+
+### Adjusting the Notebook
+
+- **Notebook Modifications:** Modify the existing Jupyter notebook to replace OpenAI calls with olama.
+- **Simplification:** Remove unnecessary code from the notebook.
+- **Reindexing:** Create and index documents in Elasticsearch as done previously.
+
+### Indexing and Searching
+
+- **Document Download:** Download documents and index them in Elasticsearch.
+- **Search Execution:** Perform searches using the updated notebook.
+- **Prompt Adjustments:** Adjust prompts as necessary to work with olama.
+
+### Troubleshooting
+
+- **Model Download:** Ensure the model is fully downloaded to avoid errors.
+- **Logs:** Check logs for any issues during execution.
+- **Patience:** Be patient with Docker, as some processes may take time.
+
+### Results and Observations
+
+- **Performance:** The model may take longer to download and start, but it should work effectively once set up.
+- **Output:** The model should provide accurate responses based on the prompt adjustments.
+
+### Conclusion
+
+- **Interface Creation:** In the next lesson, we will create a small interface to replace the Jupyter notebook.
+- **Next Steps:** Building the user interface in the following video.
 
 </details>
 
 <details>
-  <summary id="lecture-9"> </summary>
+  <summary id="lecture-9"> Creating a Streamlit UI</summary>
+
+## Overview
+Build a simple UI for the application we developed previously. Use Streamlit to achieve this.
+
+## Recap
+- We previously set up ollama and Elasticsearch in Docker Compose.
+- We ran our basic workflow entirely locally using a Jupyter notebook.
+
+## Objective
+- Create a user interface to interact with the application outside of Jupyter notebook.
+
+## Plan
+1. Use ChatGPT to help create the Streamlit application.
+2. Implement an input box and button ask.
+3. Execute the workflow when the button is clicked.
+4. Display the output, including a loading symbol during processing.
+
+## Steps
+### Preparing Streamlit
+1. **Install Streamlit:**
+```bash
+pip install streamlit
+```
+2. **Basic Streamlit Application Structure:**
+    - Input box for user questions.
+    - Button to trigger the workflow.
+    - Display area for the results.
+    - Loading indicator while processing.
+
+### Implementing the Workflow
+1. **Invoke Functionality:**
+    - Take input from the user.
+    - Invoke the main function to process the input.
+    - Display the output upon completion.
+
+2. **Streamlit App Code Example:**
+```python
+import streamlit as st
+from your_module import main_function
+
+st.title('Simple UI for RA Application')
+
+user_input = st.text_input("Ask a question:")
+if st.button('Ask'):
+with st.spinner('Processing...'):
+result = main_function(user_input)
+st.write(result)
+```
+
+### Testing and Running
+1. **Navigate to the application directory:**
+```bash
+cd your_app_directory
+```
+2. **Run the Streamlit application:**
+```bash
+streamlit run app.py
+```
+
+## Notes
+- Ensure Elasticsearch index is already created and documents are indexed.
+- Streamlit will automatically reload the app on code changes.
+- The application may take time to process due to running on a CPU instead of a GPU.
+
+## Alternatives
+- You can use other frameworks or tools to build the UI such as:
+  - Flask
+  - Telegram bot
+  - Slack bot
+- Streamlit is a simple and quick way to build UIs, but other options may offer more flexibility for complex applications.
+
+## Conclusion
+- This module demonstrates creating a simple UI for your RA application using Streamlit.
+- Experiment with different tools and frameworks to find the best fit for your project.
 
 </details>
 
