@@ -364,13 +364,13 @@ response["hits"]["hits"]
 - Importance of having unique IDs for each document to maintain integrity in the dataset.
 - Challenges with assigning IDs and ensuring they remain consistent despite updates.
 - Using a combination of document content and MD5 hashing to generate stable IDs.
-```phyton
+```python
 n = len(documents)
 for i in range(n):
     documents[i] = i
 ```
 - Generate id based on content
-```phyton
+```python
 import hashlib
 
 def generate_document_id(doc):
@@ -598,5 +598,179 @@ In this session, we successfully evaluated our text search system using the grou
 <details>
   
   <summary id="lecture-7"> Evaluating Vector Retrival</summary>
+
+## Evaluating Retrieval Methods
+
+### Introduction
+- **Objective**: Discuss evaluating our retrieval methods.
+- **Previous Work**: Evaluated text search methods, specifically Elastic Search and MeanSearch.
+- **Metrics Used**: Hit Rate and Mean Reciprocal Rank (MRR).
+
+### Overview
+- **Current Task**: Evaluate vector search using Elastic Search.
+- **Approaches**:
+  1. Use embeddings for questions only.
+  2. Use embeddings for answers only.
+  3. Combine question and answer to create embeddings.
+
+### Preparation
+- **Setup**: Copy the previous document created for text search evaluation.
+- **Adjustment**: Modify the notebook to include vector search components.
+
+### Using Sentence Transformer
+- **Library Installation**: Sentence Transformer installed.
+- **Model Selection**: Use "multi-qa-MiniLM-L6-cos-v1" for balanced performance and size.
+- **Technical Note**: 
+  - Cosine similarity vs. Dot product.
+  - Chosen model returns normalized embeddings (cosine similarity).
+
+### Loading the Model
+- **Code for Loading**:
+    ```python
+    from sentence_transformers import SentenceTransformer
+    model = SentenceTransformer('multi-qa-MiniLM-L6-cos-v1')
+    ```
+- **Testing**:
+    ```python
+    test_vector = model.encode("I just discovered the course. Can I still join?")
+    print(len(test_vector))  # Should be 384
+    ```
+
+### Creating Embeddings
+- **Types of Embeddings**:
+  - Question Embeddings
+  - Answer Embeddings
+  - Combined Question-Answer Embeddings
+- **Syntax for Mappings**:
+    ```python
+    index_settings = {
+    "settings": {
+        "number_of_shards": 1,
+        "number_of_replicas": 0
+    },
+    "mappings": {
+        "properties": {
+            "text": {"type": "text"},
+            "section": {"type": "text"},
+            "question": {"type": "text"},
+            "course": {"type": "keyword"},
+            "id": {"type": "keyword"},
+            "question_vector": {
+                "type": "dense_vector",
+                "dims": 384,
+                "index": True,
+                "similarity": "cosine"
+            },
+            "text_vector": {
+                "type": "dense_vector",
+                "dims": 384,
+                "index": True,
+                "similarity": "cosine"
+            },
+            "question_text_vector": {
+                "type": "dense_vector",
+                "dims": 384,
+                "index": True,
+                "similarity": "cosine"
+            },
+        }
+    }
+  }
+
+    ```
+
+### Looping Over Documents
+- **Encoding Documents**:
+    ```python
+    from tqdm import tqdm
+
+    for doc in tqdm(documents):
+    question = doc['question']
+    text = doc['text']
+    qt = question + ' ' + text
+
+    doc['question_vector'] = model.encode(question)
+    doc['text_vector'] = model.encode(text)
+    doc['question_text_vector'] = model.encode(qt)
+    ```
+
+### Indexing Documents
+- **Indexing Code**:
+    ```python
+    for doc in tqdm(documents):
+        es_client.index(index=index_name, document=doc)
+    ```
+
+### Constructing Search Query
+- **Basic Search Query**:
+    ```python
+    query_vector = model.encode("I just discovered the course. Can I still join?")
+    search_query = {
+                "field": "question_vector",
+                "query_vector": query_vector,
+                "k": 5,
+                "num_candidates": 10000,
+            }
+        }
+    }
+    es_results = es_client.search(
+        index=index_name,
+        body=search_query
+    )
+    
+    result_docs = []
+    
+    for hit in es_results['hits']['hits']:
+        result_docs.append(hit['_source'])
+    ```
+
+### Filtering by Course
+- **Search Query with Filter**:
+    ```python
+    search_query = {
+        "query": {
+            "knn": {
+                "field": "question_vector",
+                "query_vector": query_vector,
+                "k": 10,
+                "num_candidates": 100
+            },
+            "filter": {
+                "term": {
+                    "course": "data engineering zoomcamp"
+                }
+            }
+        }
+    }
+    results = es.search(index="documents", body=search_query)
+    ```
+
+### Making the Code Generic
+- **Generic Function**:
+    ```python
+    def search_knn(query, field, index="documents", k=10, num_candidates=100):
+        query_vector = model.encode(query)
+        search_query = {
+            "query": {
+                "knn": {
+                    "field": field,
+                    "query_vector": query_vector,
+                    "k": k,
+                    "num_candidates": num_candidates
+                }
+            }
+        }
+        results = es.search(index=index, body=search_query)
+        return results['hits']['hits']
+    ```
+
+- **Using the Function**:
+    ```python
+    results = search_knn("I just discovered the course. Can I still join?", "question_vector")
+    ```
+
+### Conclusion
+- **Next Steps**: Evaluate the performance of different embeddings (question, answer, combined) and choose the best method for our use case.
+
 
 </details>
