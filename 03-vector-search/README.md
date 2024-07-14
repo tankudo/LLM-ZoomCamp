@@ -5,7 +5,7 @@
 - [Evaluation Metrics for Retrieval](#lecture-4)
 - [Ground Truth Dataset Generation for Retrieval Evaluation](#lecture-5)
 - [Evaluation of Text Retrieval Techniques for RAG ou](#lecture-6)
-- [](#lecture-7)
+- [Evaluating Vector Retrival](#lecture-7)
 ---
 
 <details>
@@ -501,8 +501,102 @@ df.to_csv('ground-truth-data.csv', index=False)
 <details>
   
   <summary id="lecture-6"> Evaluation of Text Retrieval Techniques for RAG ou</summary>
+We are going to use the data we created in the previous lecture to evaluate text search results. In particular, we will take the document, the ground truth dataset, and use it to evaluate our search queries.
+
+## Ground Truth Dataset
+We generated this ground truth dataset by taking each record in our FAQ and asking OpenAI's GPT-4o to generate five questions based on this record. This dataset contains:
+- A question
+- The course for which the question is relevant
+- The relevant document
+
+## Evaluation Process
+For each query in our ground truth dataset, we will:
+1. Execute the query.
+2. Check if the relevant document is returned.
+3. Based on this, compute different metrics.
+
+## Metrics
+Today, we will focus on two key metrics:
+1. **Hit Rate**
+2. **Mean Reciprocal Rank (MRR)**
+
+### Hit Rate
+Hit rate tells us if we are able to retrieve the relevant document among the top five results. Specifically, if the relevant document is in the top five results, the hit rate is considered a success for that query.
+
+### Mean Reciprocal Rank (MRR)
+MRR not only tells us if we retrieved the relevant document but also how good the ranking is. The higher the ranking of the relevant document, the better. MRR is calculated as follows:
+- For each query, if the relevant document is found at position \( k \), the reciprocal rank is \( \frac{1}{k} \).
+- If the document is not found, the reciprocal rank is 0.
+- The MRR is the average of these reciprocal ranks across all queries.
+
+## Implementation
+
+### Loading Data
+We load the ground truth dataset and convert it into a dictionary for easy manipulation.
+
+```python
+# Reading the dataset
+df_ground_truth = pd.read_csv('ground-truth-data.csv')  # Load your ground truth dataset here
+ground_truth = df_ground_truth.to_dict('records')
+```
+## Iterating Over Queries
+We iterate over each query in the ground truth data and execute it using our search function. We then check if the relevant document is among the results.
+```python
+# Iterate over each query
+for query in ground_truth:
+    results = search_function(query['question'], query['course'])
+    is_relevant = query['document_id'] in [doc['id'] for doc in results]
+    # Store the relevance and rank
+```
+## Calculating Metrics
+We calculate the hit-rate and Mean Reciprocal Rank (MRR) based on the results from our search function.
+```python
+# Calculate Hit Rate
+def hit_rate(relevance_total):
+    cnt = 0
+
+    for line in relevance_total:
+        if True in line:
+            cnt = cnt + 1
+
+    return cnt / len(relevance_total)
+
+# Calculate MRR
+def mrr(relevance_total):
+    total_score = 0.0
+
+    for line in relevance_total:
+        for rank in range(len(line)):
+            if line[rank] == True:
+                total_score = total_score + 1 / (rank + 1)
+
+    return total_score / len(relevance_total)
+```
+## Results
+Finally, we evaluate the performance of our search system based on these metrics and discuss the results.
+```python
+def evaluate(ground_truth, search_function):
+    relevance_total = []
+
+    for q in tqdm(ground_truth):
+        doc_id = q['document']
+        results = search_function(q)
+        relevance = [d['id'] == doc_id for d in results]
+        relevance_total.append(relevance)
+
+    return {
+        'hit_rate': hit_rate(relevance_total),
+        'mrr': mrr(relevance_total),
+    }
+```
+```python
+evaluate(ground_truth, question_vector_knn)
+```
+## Conclusion
+In this session, we successfully evaluated our text search system using the ground truth dataset. We used two metrics, Hit Rate and MRR, to measure the effectiveness and ranking quality of our search results. This process helps us understand how well our system retrieves relevant documents and ensures that the most pertinent information is presented to the user.
 </details>
 <details>
   
-  <summary id="lecture-7"> </summary>
+  <summary id="lecture-7"> Evaluating Vector Retrival</summary>
+
 </details>
