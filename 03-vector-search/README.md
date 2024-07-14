@@ -146,27 +146,48 @@ for doc in documents:
 
 ### Elasticsearch Setup
 
-- **61.039 - 2.641**: Ensure Elasticsearch Docker container is running locally.
-- **64.64 - 6.76**: Connect to Elasticsearch instance from Python environment.
+- Ensure Elasticsearch Docker container is running locally.
+- Connect to Elasticsearch instance from Python environment.
+```python
+from elasticsearch import Elasticsearch
+es_client = Elasticsearch('http://localhost:9200') 
+```
 
 ### Indexing
 
-- **68.439 - 5.481**: Define mappings to structure data in Elasticsearch.
-- **71.4 - 4.16**: Map fields and data types for efficient storage and retrieval.
+- Define mappings to structure data in Elasticsearch.
+- Map fields and data types for efficient storage and retrieval.
 
 ### Mapping Creation
 
-- **73.92 - 3.8**: Define schema-like mapping for Elasticsearch indexing.
-- **75.56 - 4.32**: Specify fields, data types, and embedding dimensions.
-
+- Define schema-like mapping for Elasticsearch indexing.
+- Specify fields, data types, and embedding dimensions.
+```python
+index_settings = {
+    "settings": {
+        "number_of_shards": 1,
+        "number_of_replicas": 0
+    },
+    "mappings": {
+        "properties": {
+            "text": {"type": "text"},
+            "section": {"type": "text"},
+            "question": {"type": "text"},
+            "course": {"type": "keyword"} ,
+            "text_vector": {"type": "dense_vector", "dims": 768, "index": True, "similarity": "cosine"},
+        }
+    }
+}
+index_name = "course-questions"
+```
 ### Connection Verification
 
-- **77.72 - 4.68**: Test Elasticsearch connection to ensure successful setup.
+- Test Elasticsearch connection to ensure successful setup.
 
 ### Conclusion
 
-- **79.88 - 4.199**: Architecture setup and initial data preparation complete.
-- **82.4 - 4.8**: Ready to proceed with indexing and semantic search implementation.
+- Architecture setup and initial data preparation complete.
+- Ready to proceed with indexing and semantic search implementation.
 
 
 
