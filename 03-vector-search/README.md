@@ -90,22 +90,59 @@
 ### Data Preparation
 
 - Convert documents.json into Elasticsearch-friendly format.
-  
 - Flatten hierarchy to ensure all data is on the same level.
+```python
+import json
+
+with open('documents.json', 'rt') as f_in:
+    docs_raw = json.load(f_in)
+
+documents = []
+
+for course_dict in docs_raw:
+    for doc in course_dict['documents']:
+        doc['course'] = course_dict['course']
+        documents.append(doc)
+```
 
 ### Package Installation
 
-- **46.199 - 6.241**: Install Sentence Transformers package for embedding generation.
+- Install Sentence Transformers package for embedding generation.
+```python
+# This is a new library compared to the previous modules. 
+# Please perform "pip install sentence_transformers==2.7.0"
+from sentence_transformers import SentenceTransformer
 
+# if you get an error do the following:
+# 1. Uninstall numpy 
+# 2. Uninstall torch
+# 3. pip install numpy==1.26.4
+# 4. pip install torch
+# run the above cell, it should work
+model = SentenceTransformer("all-mpnet-base-v2")
+```
 ### Sentence Transformers Overview
 
-- **49.199 - 5.601**: Utilize pre-trained models to generate embeddings efficiently.
-- **52.44 - 5.36**: Example usage and inference with Sentence Transformers.
+- Utilize pre-trained models to generate embeddings efficiently.
+- Example usage and inference with Sentence Transformers.
+```python
+model = SentenceTransformer("all-mpnet-base-v2")
 
+# different models have different length
+len(model.encode("This is a simple sentence"))
+```
 ### Embedding Generation
 
-- **54.8 - 6.239**: Create embeddings for documents using selected models.
-- **57.8 - 5.88**: Store embeddings alongside original data for indexing.
+- Create embeddings for documents using selected models.
+- Store embeddings alongside original data for indexing.
+```python
+#created the dense vector using the pre-trained model
+operations = []
+for doc in documents:
+    # Transforming the title into an embedding using the model
+    doc["text_vector"] = model.encode(doc["text"]).tolist()
+    operations.append(doc)
+``` 
 
 ### Elasticsearch Setup
 
