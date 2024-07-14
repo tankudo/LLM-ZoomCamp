@@ -1,10 +1,10 @@
 ## Table of Contents
 - [Introduction to Vector Search](#lecture-1)
-- [](#lecture-2)
-- [](#lecture-3)
-- [](#lecture-4)
-- [](#lecture-5)
-- [](#lecture-6)
+- [Semantic Search with Elasticsearc](#lecture-2)
+- [Advanced Semantic Search](#lecture-3)
+- [Evaluation Metrics for Retrieval](#lecture-4)
+- [Ground Truth Dataset Generation for Retrieval Evaluation](#lecture-5)
+- [Evaluation of Text Retrieval Techniques for RAG ou](#lecture-6)
 - [](#lecture-7)
 ---
 
@@ -179,36 +179,328 @@ index_settings = {
     }
 }
 index_name = "course-questions"
+
+for doc in operations:
+    try:
+        es_client.index(index=index_name, document=doc)
+    except Exception as e:
+        print(e)
+```
+- Create end user query
+```python
+search_term = "windows or mac?"
+vector_search_term = model.encode(search_term)
+
+query = {
+    "field": "text_vector",
+    "query_vector": vector_search_term,
+    "k": 5,
+    "num_candidates": 10000, 
+}
 ```
 ### Connection Verification
 
 - Test Elasticsearch connection to ensure successful setup.
+```python
+res = es_client.search(index=index_name, knn=query, source=["text", "section", "question", "course"])
+res["hits"]["hits"]
+```
+- Perform Keyword search with Semantic Search (Hybrid/Advanced Search)
+```python
+# Note: I made a minor modification to the query shown in the notebook here
+# (compare to the one shown in the video)
+# Included "knn" in the search query (to perform a semantic search) along with the filter  
+response = es_client.search(
+    index=index_name,
+    query={
+        "bool": {
+          "multi_match": {"query" : "windows or python?,
+                        "fields": ["text", "question", "course", "title"],
+                        "type": "best_fields"
+                          },
+                },
+          "filter" : {
+              "term" : {
+                        "course": "data-engineering-zoomcamp"
+          }
+        }
+        }
+    }
+}
 
+response["hits"]["hits"]
+```
 ### Conclusion
 
 - Architecture setup and initial data preparation complete.
 - Ready to proceed with indexing and semantic search implementation.
+</details>
 
 
-
-
+<details>
   
+  <summary id="lecture-3"> Advanced Semantic Search</summary>
+
+### Understanding Semantic vs. Keyword Search
+- The advanced semantic search is not truly semantic; it's more like a keyword search.
+- Semantic search requires converting user input into vector embedding.
+
+### Correct Implementation
+- In this session, we correct the implementation for advanced semantic search.
+
+### Code Example
+- Here is the corrected code for advanced semantic search.
+- Main difference: passing vector embedding from user input.
+```python
+knn_query = {
+    "field": "text_vector",
+    "query_vector": vector_search_term,
+    "k": 5,
+    "num_candidates": 10000
+}
+
+response = es_client.search(
+    index=index_name,
+    query={
+        "match": {"section": "General course-related questions"},
+    },
+    knn=knn_query,
+    size=5
+)
+
+response["hits"]["hits"]
+```
+### Results Analysis
+- Scores in advanced search may exceed 1, indicating different scoring scales.
+- Elastic search handles core functionality; scores can vary based on search complexity.
+
+### Custom Scoring
+- Use `explain=true` to understand score calculation.
+- Custom scoring can align with business or user needs.
+
+
 </details>
 <details>
   
-  <summary id="lecture-3"> </summary>
+  <summary id="lecture-4"> Evaluation Metrics for Retrieval</summary>
+
+- Let's discuss evaluation (Evola) in our search results.
+- This is crucial in the retrieval (R) part where we retrieve data from our knowledge base.
+- There are various methods of storing and retrieving data.
+- We've seen Min search, Elasticsearch for text retrieval, and Vector search using Elasticsearch.
+- What's the best method? It depends on your data and requirements.
+- Evaluation techniques help determine the best approach.
+
+### Understanding Evaluation Metrics
+
+- Different evaluation metrics measure search effectiveness.
+- Ground truth or gold standard data sets are essential for evaluation.
+- Each query should have known relevant documents for evaluation.
+- Evaluating system performance involves comparing retrieved documents to expected results.
+
+### Practical Applications
+
+- Use evaluation metrics to assess system performance objectively.
+- Different metrics like precision, recall, and F1-score provide insights into retrieval quality.
+- Experiment with various retrieval methods and parameters to optimize search results.
+- Evaluate which method retrieves relevant documents most effectively.
+- Understand the uniqueness of each data set and tailor your evaluation metrics accordingly.
+
+### Generating Gold Standard Data
+
+- Use human-labeled data or automated methods to create gold standard data sets.
+- Assess and rank retrieval methods based on their ability to retrieve relevant documents.
+- Discuss different evaluation metrics and their relevance in ranking systems.
+- Explore techniques for generating and using gold standard data effectively.
+
+### Conclusion and Next Steps
+
+- Next, we'll delve into generating gold standard data sets using machine learning.
+- In production, user feedback and annotators help refine evaluation metrics.
+- Stay tuned for practical examples and applications in upcoming videos.
+
+### Additional Resources
+
+- Explore various evaluation metrics and their roles in assessing retrieval systems.
+- Learn more about ranking metrics and their practical applications in search systems.
+
+### Next Video Preview
+
+- In the next video, we'll explore how to create a gold standard data set using NLP techniques.
+
 </details>
 <details>
   
-  <summary id="lecture-4"> </summary>
+  <summary id="lecture-5"> Ground Truth Dataset Generation for Retrieval Evaluation</summary>
+
+### Ground Truth Dataset
+- A ground truth dataset is crucial for evaluating the performance of retrieval systems.
+- This dataset typically includes thousands of queries (1,000, 2,000, 10,000, or more) with known relevant documents.
+
+### Creating Query-Document Pairs
+- For each query in the dataset, the relevant documents from our knowledge base are identified.
+- Often, multiple relevant documents exist for a single query.
+- Simplification for this exercise: each query will have one known relevant document.
+
+### Generating the Dataset
+- Plan to generate a dataset with:
+  - A large number of queries (e.g., 5,000 queries for 1,000 FAQ records).
+  - For each query, identifying the relevant document.
+
+### Using Human Annotators and Domain Experts
+- Human annotators and domain experts can manually evaluate the relevance of documents to queries.
+- This method, though time-consuming, produces high-quality, gold-standard datasets.
+
+### Observing User Queries and System Responses
+- Another method involves observing real user queries and system responses, and then having humans evaluate the results.
+
+### Simplification for Experimental Purposes
+- For our experiments, we will simplify the process:
+  - Use an existing dataset.
+  - Assign unique IDs to documents.
+  - Use a hashing method to ensure document IDs remain consistent.
+
+### Generating Unique Document IDs
+- Importance of having unique IDs for each document to maintain integrity in the dataset.
+- Challenges with assigning IDs and ensuring they remain consistent despite updates.
+- Using a combination of document content and MD5 hashing to generate stable IDs.
+```phyton
+n = len(documents)
+for i in range(n):
+    documents[i] = i
+```
+- Generate id based on content
+```phyton
+import hashlib
+
+def generate_document_id(doc):
+    # combined = f"{doc['course']}-{doc['question']}"
+    combined = f"{doc['course']}-{doc['question']}-{doc['text'][:10]}"
+    hash_object = hashlib.md5(combined.encode())
+    hash_hex = hash_object.hexdigest()
+    document_id = hash_hex[:8]
+    return document_id
+```
+```python
+for doc in documents:
+    doc['id'] = generate_document_id(doc)
+```
+
+### Saving the Dataset
+- Exporting the dataset to JSON format for further use.
+- Ensuring readability by adding indentation to the JSON file.
+
+### Generating User Queries with LLMs
+- Using a language model to generate user queries based on FAQ records.
+- Crafting a prompt to simulate a student asking questions based on the provided FAQ record.
+```python
+prompt_template = """
+You emulate a student who's taking our course.
+Formulate 5 questions this student might ask based on a FAQ record. The record
+should contain the answer to the questions, and the questions should be complete and not too short.
+If possible, use as fewer words as possible from the record. 
+
+The record:
+
+section: {section}
+question: {question}
+answer: {text}
+
+Provide the output in parsable JSON without using code blocks:
+
+["question1", "question2", ..., "question5"]
+""".strip()
+```
+- Ensuring the generated questions are complete, relevant, and do not use too many exact words from the record.
+
+### Implementing the LLM for Query Generation
+- Using the prompt to generate five user questions for each FAQ record.
+- Configuring the language model client and executing the query generation process.
+```python
+from openai import OpenAI
+client = OpenAI()
+```
+```python
+prompt = prompt_template.format(**doc)
+
+response = client.chat.completions.create(
+        model='gpt-4o',
+        messages=[{"role": "user", "content": prompt}]
+    )
+
+json_response = response.choices[0].message.content
+json.loads(json_response)
+```
+Do for all:
+```python
+def generate_questions(doc):
+    prompt = prompt_template.format(**doc)
+
+    response = client.chat.completions.create(
+        model='gpt-4o',
+        messages=[{"role": "user", "content": prompt}]
+    )
+
+    json_response = response.choices[0].message.content
+    return json_response
+```
+```python
+from tqdm.auto import tqdm
+```
+```python
+results = {}
+```
+### Handling Duplicate Questions
+- Addressing the issue of duplicate questions in the dataset.
+```python
+for doc in tqdm(documents): 
+    doc_id = doc['id']
+    if doc_id in results: # acts like a hash
+        continue
+
+    questions = generate_questions(doc)
+    results[doc_id] = questions
+```
+- Merging duplicates or differentiating them by including parts of the answer in the hash.
+
+### Finalizing the Dataset
+- Final steps in processing the dataset.
+- Ensuring all document IDs are unique and correctly assigned.
+- Saving the processed dataset to JSON format for use in retrieval experiments.
+```python
+parsed_resulst = {}
+
+for doc_id, json_questions in results.items():
+    parsed_resulst[doc_id] = json.loads(json_questions)
+```
+```python
+doc_index = {d['id']: d for d in documents}
+```
+```python
+final_results = []
+
+for doc_id, questions in parsed_resulst.items():
+    course = doc_index[doc_id]['course']
+    for q in questions:
+        final_results.append((q, course, doc_id))
+```
+- Save to csv
+```python
+import pandas as pd
+```
+```python
+df = pd.DataFrame(final_results, columns=['question', 'course', 'document'])
+```
+```python
+df.to_csv('ground-truth-data.csv', index=False)
+```
+### Conclusion
+- The importance of a well-constructed ground truth dataset for evaluating retrieval systems.
+- Simplifications made for the experiment and the methods used to ensure data integrity and relevance.
 </details>
 <details>
   
-  <summary id="lecture-5"> </summary>
-</details>
-<details>
-  
-  <summary id="lecture-6"> </summary>
+  <summary id="lecture-6"> Evaluation of Text Retrieval Techniques for RAG ou</summary>
 </details>
 <details>
   
