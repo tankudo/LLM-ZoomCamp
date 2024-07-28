@@ -2,7 +2,7 @@
 - [Introduction to monitoring answer quality](#lecture-1)
 - [Evaluation and Monitoring in LLMs](#lecture-2)
 - [Offline RAG Evaluation](#lecture-3)
-- [](#lecture-4)
+- [Offline RAG Evaluation: Cosine Similarity](#lecture-4)
 - [](#lecture-5)
 - [](#lecture-6)
 - [](#lecture-7)
@@ -447,7 +447,7 @@ df_gpt35.to_csv('data/results-gpt35.csv', index=False)
 </details>
 <details>
   
-  <summary id="lecture-4"> </summary>
+  <summary id="lecture-4">Offline RAG Evaluation: Cosine Similarity </summary>
   
 </details>
 <details>
