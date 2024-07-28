@@ -380,7 +380,59 @@ for i, rec in enumerate(tqdm(ground_truth)):
 - **Execution Time**:
   - The entire process took approximately 2-3 hours.
   - Prepared to share the results to save others from re-execution costs.
+ 
+### Evaluating GPT 3.5
+```python
+rag(ground_truth[10], model='gpt-3.5-turbo')
+```
+```python
+from tqdm.auto import tqdm
 
+from concurrent.futures import ThreadPoolExecutor
+
+pool = ThreadPoolExecutor(max_workers=6)
+
+def map_progress(pool, seq, f):
+    results = []
+
+    with tqdm(total=len(seq)) as progress:
+        futures = []
+
+        for el in seq:
+            future = pool.submit(f, el)
+            future.add_done_callback(lambda p: progress.update())
+            futures.append(future)
+
+        for future in futures:
+            result = future.result()
+            results.append(result)
+
+    return results
+```
+```python
+def process_record(rec):
+    model = 'gpt-3.5-turbo'
+    answer_llm = rag(rec, model=model)
+    
+    doc_id = rec['document']
+    original_doc = doc_idx[doc_id]
+    answer_orig = original_doc['text']
+
+    return {
+        'answer_llm': answer_llm,
+        'answer_orig': answer_orig,
+        'document': doc_id,
+        'question': rec['question'],
+        'course': rec['course'],
+    }
+```
+```python
+results_gpt35 = map_progress(pool, ground_truth, process_record)
+```
+```python
+df_gpt35 = pd.DataFrame(results_gpt35)
+df_gpt35.to_csv('data/results-gpt35.csv', index=False)
+```
 - **Next Steps**:
   - Continue evaluating the similarity metrics.
   - Prepare for further offline evaluation before production roll-out.
