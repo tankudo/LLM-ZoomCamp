@@ -3,7 +3,7 @@
 - [Evaluation and Monitoring in LLMs](#lecture-2)
 - [Offline RAG Evaluation](#lecture-3)
 - [Offline RAG Evaluation: Cosine Similarity](#lecture-4)
-- [](#lecture-5)
+- [Offline RAG Evaluation: LLM as a Judge](#lecture-5)
 - [](#lecture-6)
 - [](#lecture-7)
 - [](#lecture-8)
@@ -449,10 +449,96 @@ df_gpt35.to_csv('data/results-gpt35.csv', index=False)
   
   <summary id="lecture-4">Offline RAG Evaluation: Cosine Similarity </summary>
   
+## Offline Evaluation
+   - In this camp, we talk about offline evaluation of LLMs.
+   - By "offline," I mean metrics we calculate offline before deployment.
+
+## Importance of Offline Metrics
+   - Offline metrics are calculated in our test or development environment.
+   - These metrics are assessed before deploying to production.
+   - Calculations are done in a controlled setting.
+   - Metrics are computed in our test environment.
+   - Alternatively, they can be computed in the development environment.
+   - If the metrics look good, we push to production.
+   - Then, we proceed with online evaluation.
+
+## Previous Work and Current Focus
+  - Continuing from our previous lecture, where we created a notebook.
+  - Notebook loaded with ground truth data.
+  - Each question had an original answer and an LLM-generated answer.
+  - Answers were generated using our rag function.
+  - We used two models: 3.5 and 4.0.
+  - Results stored in a CSV file.
+
+## Cosine Similarity Metric
+**Cosine Similarity Explanation**
+  - Cosine similarity is used to compare the generated answer to the original.
+  - Original answer (A) -> Synthetic question -> LLM answer -> Compute cosine similarity between A and LLM answer.
+  - Calculated for each record and stored.
+
+## Implementation Details
+  - Loaded data into dictionaries for easier manipulation.
+  - Computed similarity scores for each record.
+  - Results stored and mean cosine similarity computed using pandas.
+```python
+def compute_similarity(record):
+    answer_orig = record['answer_orig']
+    answer_llm = record['answer_llm']
+    
+    v_llm = model.encode(answer_llm)
+    v_orig = model.encode(answer_orig)
+    
+    return v_llm.dot(v_orig)
+```
+```python
+for record in tqdm(results_gpt4o):
+    sim = compute_similarity(record)
+    similarity.append(sim)
+```
+```python
+df_gpt4o['cosine'] = similarity
+df_gpt4o['cosine'].describe()
+```
+```python
+results_gpt35 = df_gpt35.to_dict(orient='records')
+
+similarity_35 = []
+
+for record in tqdm(results_gpt35):
+    sim = compute_similarity(record)
+    similarity_35.append(sim)
+```
+```python
+df_gpt35['cosine'] = similarity_35
+df_gpt35['cosine'].describe()
+```
+## Model Comparison
+  - Both models showed similar distributions in cosine similarity scores.
+  - Minor differences, with GPT-3.5 being slightly worse but significantly cheaper and faster.
+```python
+import matplotlib.pyplot as plt
+
+sns.displot(df_dpt4o['cosine'], label='4o')
+sns.displot(df_dpt35['cosine'], label='3.5')
+```
+![image](https://github.com/user-attachments/assets/f40a2de9-3548-4e49-a1c2-cc58dc2a2859)
+
+## New Model Evaluation
+7. **Testing GPT-4 Mini**
+  - New model "GPT-4 Mini" claimed to be cheaper and faster.
+  - Initial tests faced rate limits, suggesting a more careful approach for evaluation.
+  - Plan to complete evaluation later due to rate limits.
+![image](https://github.com/user-attachments/assets/2677e4b7-95d0-4d38-a9ad-f743dc804e68)
+
+## Summary
+8. **Conclusion**
+    - Established a method for offline LLM evaluation using cosine similarity.
+    - Compared multiple models to assess performance and cost-efficiency.
+    - Future work includes comprehensive evaluation of new models under rate limits.
 </details>
 <details>
   
-  <summary id="lecture-5"> </summary>
+  <summary id="lecture-5">Offline RAG Evaluation: LLM as a Judge</summary>
   
 </details>
 
