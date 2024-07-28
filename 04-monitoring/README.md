@@ -334,13 +334,6 @@ v_orig = model.encode(answer_orig)
 
 v_llm.dot(v_orig)
 ```
-```python
-```
-```python
-```
-```python
-```
-
 - **Process**:
   - Created vectors for both original and generated answers.
   - Calculated cosine similarity.
@@ -349,15 +342,31 @@ v_llm.dot(v_orig)
 ## Loop and Data Handling
 - **Loop**:
   - Iterate over the ground truth dataset.
-  - Generate and store answers in a list.
+  - Generate and store answers in a dictionary.
   - Use GPT-4 for generating answers (can be expensive).
   - Consider using GPT-3.5 for cost efficiency.
+ 
+```python
+answers = {}
+```
+```python
+for i, rec in enumerate(tqdm(ground_truth)):
+    if i in answers:
+        continue
 
-- **Error Handling**:
-  - Implemented mechanisms to continue from where it broke.
-  - Used TQDM for progress tracking.
-  - Ensured not to exceed rate limits to avoid being blocked.
+    answer_llm = rag(rec)
+    doc_id = rec['document']
+    original_doc = doc_idx[doc_id]
+    answer_orig = original_doc['text']
 
+    answers[i] = {
+        'answer_llm': answer_llm,
+        'answer_orig': answer_orig,
+        'document': doc_id,
+        'question': rec['question'],
+        'course': rec['course'],
+    }
+```
 ## Saving and Analyzing Results
 - **Saving Results**:
   - Saved answers in a separate cell to avoid losing data on errors.
