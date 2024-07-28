@@ -1,5 +1,5 @@
 ## Table of Contents
-- Introduction to monitoring answer quality[](#lecture-1)
+- [Introduction to monitoring answer quality](#lecture-1)
 - [Evaluation and Monitoring in LLMs](#lecture-2)
 - [](#lecture-3)
 - [](#lecture-4)
@@ -72,6 +72,74 @@
 <details>
   
   <summary id="lecture-2"> Evaluation and Monitoring in LLMs</summary>
+  
+## Evaluation and monitoring are closely related. We will start with offline evaluation.
+
+### Offline Evaluation
+- **Specific Focus:** Evaluating RAG (Retrieval-Augmented Generation), but applicable to other LLMs.
+- **Goal:** Evaluate the quality of LLM applications, including a recap of previous modules.
+
+### Recap of Previous Modules
+
+- **Overview:** 
+  - **First Module:** Defined the RAG flow:
+    - Query
+    - Search results
+    - Prompt creation based on query and search results
+    - Using an LLM to generate the answer
+ ```python
+  def rag(q):
+    search_results = search(q)
+    promt = build_promt(Q, search_results)
+    answer = llm(promt)
+    return(answer)   
+ ```
+
+- **Second Module:** Replacing OpenAI with other LLMs.
+
+- **Third Module:** 
+  - **Focus:** Vector search and evaluating retrieval.
+  - **Metrics:** Hit rate, Mean Reciprocal Rank (MRR).
+  - **Evaluation:** Various ways to implement and evaluate the search function.
+    - We know how to evaluate retrival and now we need to know how to evaluate the prompt and LLM.
+
+### Evaluating the Entire System
+
+- **Approaches:** Offline and Online evaluation.
+  - **Offline Evaluation:** Metrics like hit rate to evaluate search results before deployment.
+      
+
+- **Online Evaluation:** 
+  - **Methods:** A/B tests, user feedback (thumbs up/down), and monitoring overall system health.
+  - **Metrics:** Performance metrics like CPU usage, user feedback, and answer quality.
+
+## Offline Evaluation in Detail
+
+**Time:** 364.84 - 4.84
+- **Focus:** Offline evaluation including cosine similarity and LLM as a judge.
+
+### Cosine Similarity
+
+**Time:** 374.919 - 4.321
+- **Definition:** Measure how close the generated answer is to the expected answer.
+- **Process:**
+  - Create a test dataset with Q&A pairs.
+  - Use LLM to generate answers for the questions.
+  - Compute cosine similarity between original and generated answers.
+
+### LLM as a Judge
+
+**Time:** 501.8 - 4.839
+- **Process:**
+  - Ask the LLM to judge the similarity between the original and generated answers.
+  - Alternatively, ask the LLM to judge how well the generated answer addresses the question directly.
+
+## Conclusion
+
+**Time:** 555.16 - 7.799
+- **Next Steps:** In the next video, we will delve deeper into the offline evaluation of RAG systems and compute these metrics.
+- **Sign-off:** See you soon.
+
   
 </details>
 
