@@ -4,7 +4,7 @@
 - [Offline RAG Evaluation](#lecture-3)
 - [Offline RAG Evaluation: Cosine Similarity](#lecture-4)
 - [Offline RAG Evaluation: LLM as a Judge](#lecture-5)
-- [](#lecture-6)
+- [Capturing User Feedback](#lecture-6)
 - [](#lecture-7)
 - [](#lecture-8)
 - [](#lecture-9)
@@ -665,12 +665,106 @@ The approach of using LLMs to judge the quality of generated answers provides va
 2. Execute the evaluation on a larger dataset.
 3. Analyze and address common issues in non-relevant evaluations.
 
-
 </details>
 
 <details>
   
-  <summary id="lecture-6"> </summary>
+  <summary id="lecture-6">Capturing User Feedback </summary>
+
+### Introduction
+In this segment of the lecture, the focus is on how to capture and monitor user feedback within an LLM (Large Language Model) application. The goal is to integrate a user interface that allows users to provide feedback on the responses they receive from the model.
+
+## Capturing User Feedback
+The primary aim is to capture user feedback effectively. This can be achieved by integrating features like thumbs up and thumbs down buttons, which allow users to express their satisfaction or dissatisfaction with the responses provided by the LLM.
+
+## Implementation Overview
+To implement this, we need:
+- A user interface for feedback (thumbs up/down).
+- Logic to handle the feedback data.
+- Storage to save user feedback along with the question asked and the response received from the LLM.
+
+### Experiment with Claude
+An experiment is introduced using **Claude**, which is an alternative to ChatGPT, built with a focus on LLM applications. The idea is to create the required user feedback mechanism using Clot and explore how it performs compared to ChatGPT. Use stream application from the second module.
+
+### Plan
+1. Add thumbs up and thumbs down buttons to the application.
+2. Store the user feedback along with the question and the LLM’s response in a PostgreSQL database.
+3. Use Docker to containerize the application, making the setup and deployment easier.
+
+## Coding and Implementation
+- **Streamlit Application Setup:** 
+  The existing Streamlit application is enhanced by adding thumbs up and thumbs down buttons. The plan includes moving the core logic out of the main application into separate modules for better code management.
+
+- **Ollama Integration:** 
+  The Ollama model is integrated for LLM responses. The decision is made to continue using Ollama rather than switching to OpenAI’s GPT, to maintain the course's focus on using open-source LLMs.
+
+- **Database Setup:**
+  PostgreSQL is selected to store conversations, user feedback, and associated data. The database model will capture the question, the response, and whether the feedback was positive or negative.
+
+- **Dockerization:**
+  The application is containerized using Docker. The Docker Compose file is updated to include:
+  - A persistent data storage for Elasticsearch to avoid re-indexing every time the container is restarted.
+  - A PostgreSQL container for the database.
+  - The Streamlit application container.
+
+## Execution and Testing
+- **Initial Setup and Docker Compose:**
+  The Docker Compose setup is executed, which includes setting up Elasticsearch and PostgreSQL. Additional scripts are written to automate the database initialization and indexing processes.
+
+- **Code Refactoring:**
+  The code is refactored to improve readability and maintainability by:
+  - Moving imports to the top.
+  - Creating separate functions for each logical block.
+  - Adding print statements for better logging.
+
+- **Testing and Debugging:**
+  After running the application, an error regarding missing Python modules (`psycopg2`) is encountered, which needs to be resolved by installing the necessary packages.
+
+## Reindexing with Elasticsearch
+- The process of reindexing with Elasticsearch involves executing previously done steps to ensure the data is indexed properly.
+- Commands are run incrementally, and errors or issues during execution are troubleshooted by commenting out unnecessary code blocks.
+
+## Troubleshooting Elasticsearch Reindexing
+- When encountering issues such as a lack of apparent activity during reindexing, the instructor introduces debugging steps, such as writing the status to logs and ensuring correct installation.
+
+## Connecting to PostgreSQL via PG CLI
+- The session demonstrates connecting to a PostgreSQL database using the `pgcli`.
+- Key steps include:
+  1. Running commands to check if the database connection is successful.
+  2. Listing databases and tables using PostgreSQL commands (`\l` and `\dt`).
+  3. Ensuring the database setup is correct by verifying the existence of expected tables.
+
+## Docker Compose and Environment Configuration
+- The Docker Compose setup is reviewed to ensure it correctly loads data and interacts with services like PostgreSQL and Elasticsearch.
+- Important points include:
+  - The use of environment variables like `ELASTIC_URL_LOCAL=http://localhost::9201` and `ELASTIC_URL=http://elacticsearch:9200` to manage service connections.
+  - Adjusting Docker configuration to ensure services pick up the correct files and run as expected.
+
+## Testing and Adjusting Streamlit for Vector Search
+- Streamlit is tested with text-based search initially, and then adjustments are planned for integrating vector search.
+- The transition involves modifying the query handling to switch from text search to vector search.
+
+## Rebuilding Docker Services
+- The process of stopping, rebuilding, and restarting Docker services is discussed to address issues such as outdated or cached configurations.
+- Commands like `docker-compose stop`, `docker-compose build`, and `docker-compose up` are used iteratively to ensure the services are running correctly.
+
+## Downloading Models and Ensuring Service Stability
+- For the Ollama model, a Docker container is used to download and set up the model.
+- Testing involves checking the logs for errors and ensuring the model integration works with the application.
+
+## Debugging and Logging
+- Emphasis is placed on using logs to debug services within Docker.
+- The discussion includes:
+  - Adding logging or print statements in the code to understand what is happening during execution.
+  - Using Docker commands to follow logs (`docker logs -f`) and observe the application's behavior in real-time.
+
+## Final Adjustments and Service Testing
+- Final steps involve ensuring that all services (PostgreSQL, Elasticsearch, Ollama) are correctly initialized and running.
+- The instructor points out the importance of verifying that each service interacts correctly with others before final deployment.
+
+---
+
+By the end of this section, the services are running, but further checks are necessary to confirm everything is functioning as expected, particularly in ensuring that Docker logs and Streamlit's behavior reflect the desired outcomes.
   
 </details>
 
