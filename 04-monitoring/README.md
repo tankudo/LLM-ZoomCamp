@@ -5,8 +5,8 @@
 - [Offline RAG Evaluation: Cosine Similarity](#lecture-4)
 - [Offline RAG Evaluation: LLM as a Judge](#lecture-5)
 - [Capturing User Feedback](#lecture-6)
-- [](#lecture-7)
-- [](#lecture-8)
+- [Capturing User Feedback, Part 2](#lecture-7)
+- [Monitoring the System](#lecture-8)
 - [](#lecture-9)
 ---
 
@@ -770,8 +770,66 @@ By the end of this section, the services are running, but further checks are nec
 
 <details>
   
-  <summary id="lecture-7"> </summary>
+  <summary id="lecture-7">Capturing User Feedback, Part 2 </summary>
+
+### Overview
+In this part of the lecture, we focus on enhancing our assistant by adding the ability to use text search or semantic search and allowing the selection of different models (Ollama or OpenAI GPT-4). We will also integrate the Sentence Transformer library to facilitate vector search.
+
+### Key Points
+
+1. **Objective**:
+    - Enable text search or semantic search in the assistant.
+    - Integrate a model selection feature to choose between Ollama and GPT-4.
+    - Add the Sentence Transformer library for vector search capability.
+
+2. **Initial Setup**:
+    - Discuss the need to add features for text and semantic search.
+    - Introduce the requirement to integrate the Sentence Transformer library.
+
+3. **Model Selection**:
+    - Plan to replace Ollama with OpenAI GPT-4.
+    - Provide a toggle feature to switch between Ollama and GPT-4.
+
+4. **Implementing Search Options**:
+    - Add a dropdown in Streamlit to select between text search and vector search.
+    - Copy necessary code for vector search from a notebook.
+
+5. **Code Adjustments**:
+    - Modify the assistant to include the updated model and search options.
+    - Adjust the code to handle the new functionalities, ensuring compatibility and performance improvements.
+
+### Detailed Steps
+
+1. **Update Requirements**:
+    - Ensure all necessary libraries are included, such as OpenAI, Sentence Transformers, and others.
+    - Verify the correct versions of dependencies, like PyTorch and Sentence Transformers.
+
+2. **Modify the Assistant Code**:
+    - Implement model selection logic.
+    - Add search type logic to toggle between text and vector search.
+    - Format and clean up the code for better readability and maintenance.
+
+3. **Handling Dependencies**:
+    - Address issues with dependencies like CUDA for GPU usage.
+    - Ensure the assistant works efficiently with CPU-only dependencies to avoid unnecessary GPU downloads.
+
+4. **Testing and Debugging**:
+   - Faced challenges with unnecessary dependencies (e.g., pandas, Cuda).
+   - Resolved issues by:
+    - Restarting the assistant to apply changes.
+    - Ensuring that the correct versions of all required libraries were installed and used.
   
+### 6. Final Verification and Commit
+  - Verified that the assistant now correctly:
+    - Allows model selection.
+    - Switches between text search and vector search.
+  - Observed a minor issue where text input doesn't clear after submitting, but decided to address it later.
+  - Committed the final version of the code.
+
+### 7. Next Steps: Monitoring Setup
+  - **Upcoming Tasks**: Set up Grafana for monitoring the assistant's performance.
+  - Preparing to move on to the next phase of the project.
+
 </details>
 
 <details>
