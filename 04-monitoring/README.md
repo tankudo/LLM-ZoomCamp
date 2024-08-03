@@ -7,7 +7,7 @@
 - [Capturing User Feedback](#lecture-6)
 - [Capturing User Feedback, Part 2](#lecture-7)
 - [Monitoring the System](#lecture-8)
-- [](#lecture-9)
+- [Extra Grafana video](#lecture-9)
 ---
 
 <details>
@@ -834,14 +834,133 @@ In this part of the lecture, we focus on enhancing our assistant by adding the a
 
 <details>
   
-  <summary id="lecture-8"> </summary>
+  <summary id="lecture-8">Monitoring the System </summary>
   
+## Overview
+In this series, we're discussing evaluation and monitoring. We have covered offline evaluation extensively and recently focused on online evaluation. In the last few videos, we explored capturing user feedback and integrating it into our system.
+
+## Topics Covered
+
+### Offline and Online Evaluation
+- Extensive discussion on offline evaluation.
+- Recent videos focused on online evaluation.
+- Capturing user feedback using thumbs up/down.
+
+### Integrating Feedback Mechanisms
+- Combining all previous components into a unified system.
+- Storing data in a PostgreSQL database.
+- Capturing user feedback (thumbs up/down) to evaluate response relevancy.
+
+### Using LLMs as Judges
+- Different methods of using Large Language Models (LLMs) to judge response relevancy.
+- QA relevancy: Asking LLMs to evaluate the relevance of answers to questions.
+
+## Today's Objective
+
+### Monitoring System Setup
+- Integrating all components into a monitoring system.
+- Building a dashboard to display various metrics:
+  - Number of requests.
+  - Relevance of responses.
+  - Thumbs up/down counts.
+  - Last 5 conversations with ability to filter by relevance.
+  - Model used.
+  - Prompt and completion token.
+  - Cost of operations.
+
+### Tools and Technologies
+- **Grafana**: For creating real-time dashboards.
+- **PostgreSQL**: As the backend database.
+
+## Implementation Steps
+
+### Preparing the Prompt
+- Customize the prompt to include monitoring with Grafana.
+- Specify the metrics to display (response time, relevance, token count, cost).
+- Use PostgreSQL as the backend database.
+
+### Modifying the Code
+- Update the LLM invocation to return additional information (response time, relevancy, token count).
+- Implement functions to log each LLM invocation.
+- Adjust the cost calculation to be more accurate and moved to a separate function.
+
+### Streamlit App Updates
+- Display the monitoring information in the Streamlit app for immediate feedback.
+- Add new fields to display logs and statistics.
+
+### Setting Up Grafana
+- Configure Grafana to connect to the PostgreSQL database.
+- Create dashboards to display the metrics in real-time.
+
+## Demonstration
+
+### Running the Docker Compose
+- Use `docker-compose up` to build and start the Streamlit app and Grafana.
+- Initialize the database and ensure connectivity.
+
+### Generating Synthetic Data
+- Create a script to generate synthetic data for testing purposes.
+- Use prompts to guide the creation and insertion of this data into the database.
+
+### Accessing and Configuring Grafana
+- Set up Grafana with the default login (admin/admin).
+- Add PostgreSQL as a data source.
+- Create and configure the first dashboard with SQL queries to display metrics.
+
+## Conclusion
+- Summary of integrating monitoring with Grafana.
+- Explanation of displaying various metrics using the dashboard.
+- Importance of real-time monitoring in evaluating LLM performance.
+
+## Next Steps
+- Continuously improve and adjust the monitoring system based on feedback.
+- Explore advanced features in Grafana for more sophisticated monitoring.
+
 </details>
 
 <details>
   
-  <summary id="lecture-9"> </summary>
-  
+  <summary id="lecture-9">Extra Grafana video </summary>
+## Addressing Previous Issues
+
+- In the previous video, there were issues with saving at the end. 
+  - **Solution**: Adding a timestamp within SQL query, which is optional, and setting it to the current time when it's none. 
+  - **Outcome**: It works fine now, and in Grafana, the latest questions can be seen.
+
+## Course Questions
+
+- Common questions about the course:
+  - Can I take the course if I don't know math?
+  - Can I take the course if I don't know Docker?
+
+## Time Intervals in Grafana
+
+- Discussing intervals in Grafana:
+  - Changing the interval to the last 5 minutes updates the time series panels.
+  - Some elements don't change based on intervals and always show data from the entire database.
+  - **Solution**: Use Grafana variables to filter data. For example, adding a `WHERE` statement to filter conversations within a specific time range.
+
+## Example Queries in Grafana
+
+- Example of using Grafana variables:
+  - Prepared queries in `grafon.md`.
+  - Added variables to filter feedback and relevance statistics based on timestamps.
+  - Running the queries to see updates in the specified interval.
+
+## Saving and Loading Grafana Dashboards
+
+- How to save and load Grafana dashboards:
+  - Go to settings and click on the JSON model to copy and paste the dashboard JSON to Git.
+  - Share and export the dashboard to a file.
+  - Import the saved file to reload the dashboard.
+  - Programmatically save and load dashboards using API instead of manual clicking.
+
+## Conclusion
+
+- Wrapping up the module:
+  - The module has been long, but we've covered all necessary topics.
+  - Time to do homework. See you soon!
+
 </details>
 
 
