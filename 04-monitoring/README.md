@@ -539,7 +539,133 @@ sns.displot(df_dpt35['cosine'], label='3.5')
 <details>
   
   <summary id="lecture-5">Offline RAG Evaluation: LLM as a Judge</summary>
-  
+
+### Introduction
+The goal is to have a comprehensive method for evaluating all three steps in the RAG flow: Search, Prompt, and LLM.
+
+### Evaluation Metrics
+We use different evaluation metrics for this purpose. We've already discussed cosine similarity, which was used to evaluate three models: GPT-3.5 Turbo, GPT-4.0, and GPT-4.0 Mini. The conclusion was that GPT-4.0 Mini provided the best results in terms of cosine similarity.
+
+### Alternative Evaluation Approach
+Instead of relying solely on cosine similarity, we can also use an LLM to judge the quality of the outputs. For example, we can ask the LLM to evaluate if the generated content is good enough.
+
+### Using LLM as a Judge
+We can compare original questions and answers with generated questions and answers. This method helps us assess the relevance and quality of the generated responses.
+
+### Prompt Engineering
+To facilitate this evaluation, let's prepared a prompt for GPT-4, asking it to act as a prompt engineering expert. The prompt was designed to generate questions and assess the ability to recover original answers.
+
+#### Prompt Details
+1. **First Case**: 
+   - Input: Original answer, generated question, and generated answer.
+   - Purpose: For offline evaluation where we have access to the original answer.
+
+2. **Second Case**: 
+   - Input: Generated question and generated answer.
+   - Purpose: For online evaluation where the original answer is not available.
+
+### LLM-as-a-Judge
+```python
+prompt1_template = """
+You are an expert evaluator for a Retrieval-Augmented Generation (RAG) system.
+Your task is to analyze the relevance of the generated answer compared to the original answer provided.
+Based on the relevance and similarity of the generated answer to the original answer, you will classify
+it as "NON_RELEVANT", "PARTLY_RELEVANT", or "RELEVANT".
+
+Here is the data for evaluation:
+
+Original Answer: {answer_orig}
+Generated Question: {question}
+Generated Answer: {answer_llm}
+
+Please analyze the content and context of the generated answer in relation to the original
+answer and provide your evaluation in parsable JSON without using code blocks:
+
+{{
+  "Relevance": "NON_RELEVANT" | "PARTLY_RELEVANT" | "RELEVANT",
+  "Explanation": "[Provide a brief explanation for your evaluation]"
+}}
+""".strip()
+```
+```python
+prompt2_template = """
+You are an expert evaluator for a Retrieval-Augmented Generation (RAG) system.
+Your task is to analyze the relevance of the generated answer to the given question.
+Based on the relevance of the generated answer, you will classify it
+as "NON_RELEVANT", "PARTLY_RELEVANT", or "RELEVANT".
+
+Here is the data for evaluation:
+
+Question: {question}
+Generated Answer: {answer_llm}
+
+Please analyze the content and context of the generated answer in relation to the question
+and provide your evaluation in parsable JSON without using code blocks:
+
+{{
+  "Relevance": "NON_RELEVANT" | "PARTLY_RELEVANT" | "RELEVANT",
+  "Explanation": "[Provide a brief explanation for your evaluation]"
+}}
+""".strip()
+```
+### Execution of the Evaluation
+We executed the evaluation for a sample of 100 to 200 records to ensure the results are reproducible. Here’s a step-by-step overview of the process:
+
+1. **Sampling Data**: 
+   - Set a seed for reproducibility.
+   - Sample a subset of the data.
+```python  
+df_sample = df_gpt4o_mini.sample(n=150, random_state=1)
+```
+```python
+samples = df_sample.to_dict(orient='records')
+```
+2. **Creating Prompts**: 
+   - Generate prompts based on the sampled data.
+   - Use the LLM to evaluate the prompts.
+```python
+prompt = prompt1_template.format(**record)
+print(prompt)
+```
+```python
+answer = llm(prompt, model='gpt-4o-mini')
+```
+```python
+import json
+```
+```python
+evaluations = []
+
+for record in tqdm(samples):
+    prompt = prompt1_template.format(**record)
+    evaluation = llm(prompt, model='gpt-4o-mini')
+    evaluations.append(evaluation)
+```
+3. **Parsing Results**: 
+   - Ensure the output is in JSON format for easy parsing.
+   - Handle potential issues with non-parseable outputs by refining prompts.
+
+### Handling Errors
+Errors can occur when the LLM returns code blocks or non-JSON outputs. We adjusted the prompts to avoid such issues and ensure consistent, parseable JSON outputs.
+
+### Results and Analysis
+After executing the prompts and parsing the results, we analyzed the distribution of relevant and non-relevant answers. This involved:
+
+- Counting the occurrences of relevant and non-relevant evaluations.
+- Identifying examples of non-relevant evaluations to understand common issues.
+  ```python
+  df_evaluations[df_evaluations.Relevance == 'NON_RELEVANT']
+  ```
+
+### Conclusion
+The approach of using LLMs to judge the quality of generated answers provides valuable insights into the effectiveness of our ROCK system. By refining prompts and ensuring JSON outputs, we can systematically evaluate and improve our models.
+
+### Next Steps
+1. Further refine the evaluation prompts.
+2. Execute the evaluation on a larger dataset.
+3. Analyze and address common issues in non-relevant evaluations.
+
+
 </details>
 
 <details>
